@@ -1,0 +1,26 @@
+{
+  "name": "random-access-memory",
+  "version": "0.0.0",
+  "description": "Exposes the same interface as random-access-file but instead of writing/reading data to a file it maintains it in memory",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard && tape test.js"
+  },
+  "dependencies": {
+    "inherits": "^2.0.1"
+  },
+  "devDependencies": {
+    "standard": "^6.0.8",
+    "tape": "^4.5.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mafintosh/random-access-memory.git"
+  },
+  "author": "Mathias Buus (@mafintosh)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mafintosh/random-access-memory/issues"
+  },
+  "homepage": "https://github.com/mafintosh/random-access-memory"
+}
