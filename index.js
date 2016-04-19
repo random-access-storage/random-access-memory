@@ -8,6 +8,7 @@ function RandomAccessMemory () {
   events.EventEmitter.call(this)
   this.buffer = Buffer(0)
   this.opened = true
+  this.length = 0
 }
 
 inherits(RandomAccessMemory, events.EventEmitter)
@@ -24,6 +25,7 @@ RandomAccessMemory.prototype.write = function (offset, data, cb) {
     newBuf.fill(0)
     this.buffer.copy(newBuf)
     this.buffer = newBuf
+    this.length = this.buffer.length
   }
 
   data.copy(this.buffer, offset)
