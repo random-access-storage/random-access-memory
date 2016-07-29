@@ -39,7 +39,6 @@ RandomAccessMemory.prototype.read = function (offset, length, cb) {
 }
 
 RandomAccessMemory.prototype.close = function (cb) {
-  this.buffer = null
   this.emit('close')
   cb(null)
 }
