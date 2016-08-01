@@ -1,23 +1,18 @@
-var events = require('events')
 var inherits = require('inherits')
+var AbstractRandomAccess = require('abstract-random-access')
 
 module.exports = RandomAccessMemory
 
 function RandomAccessMemory () {
   if (!(this instanceof RandomAccessMemory)) return new RandomAccessMemory()
-  events.EventEmitter.call(this)
+  AbstractRandomAccess.call(this)
   this.buffer = Buffer(0)
-  this.opened = true
   this.length = 0
 }
 
-inherits(RandomAccessMemory, events.EventEmitter)
+inherits(RandomAccessMemory, AbstractRandomAccess)
 
-RandomAccessMemory.prototype.open = function (cb) {
-  cb()
-}
-
-RandomAccessMemory.prototype.write = function (offset, data, cb) {
+RandomAccessMemory.prototype._write = function (offset, data, cb) {
   if (!this.buffer) return cb(new Error('Instance is closed'))
 
   if (offset + data.length > this.buffer.length) {
@@ -32,13 +27,8 @@ RandomAccessMemory.prototype.write = function (offset, data, cb) {
   cb(null)
 }
 
-RandomAccessMemory.prototype.read = function (offset, length, cb) {
+RandomAccessMemory.prototype._read = function (offset, length, cb) {
   if (!this.buffer) return cb(new Error('Instance is closed'))
   if (offset + length > this.buffer.length) return cb(new Error('Could not satisfy length'))
   cb(null, this.buffer.slice(offset, offset + length))
-}
-
-RandomAccessMemory.prototype.close = function (cb) {
-  this.emit('close')
-  cb(null)
 }
