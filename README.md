@@ -21,6 +21,12 @@ file.write(0, Buffer('hello'), function () {
 })
 ```
 
+You can also initialize a `ram` instance with a `Buffer`:
+
+```js
+var file = ram(Buffer('hello world'))
+```
+
 ## License
 
 MIT
