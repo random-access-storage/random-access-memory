@@ -56,3 +56,12 @@ tape('random access write and read', function (t) {
     })
   })
 })
+
+tape('buffer constructor', function (t) {
+  var file = ram(Buffer('contents'))
+  file.read(0, 7, function (err, buf) {
+    t.error(err)
+    t.deepEqual(buf, Buffer('content'))
+    t.end()
+  })
+})

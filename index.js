@@ -3,11 +3,11 @@ var AbstractRandomAccess = require('abstract-random-access')
 
 module.exports = RandomAccessMemory
 
-function RandomAccessMemory () {
-  if (!(this instanceof RandomAccessMemory)) return new RandomAccessMemory()
+function RandomAccessMemory (buf) {
+  if (!(this instanceof RandomAccessMemory)) return new RandomAccessMemory(buf)
   AbstractRandomAccess.call(this)
-  this.buffer = Buffer(0)
-  this.length = 0
+  this.buffer = buf || Buffer(0)
+  this.length = this.buffer.length
 }
 
 inherits(RandomAccessMemory, AbstractRandomAccess)
