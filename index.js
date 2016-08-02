@@ -13,8 +13,6 @@ function RandomAccessMemory (buf) {
 inherits(RandomAccessMemory, AbstractRandomAccess)
 
 RandomAccessMemory.prototype._write = function (offset, data, cb) {
-  if (!this.buffer) return cb(new Error('Instance is closed'))
-
   if (offset + data.length > this.buffer.length) {
     var newBuf = Buffer(offset + data.length)
     newBuf.fill(0)
@@ -28,7 +26,6 @@ RandomAccessMemory.prototype._write = function (offset, data, cb) {
 }
 
 RandomAccessMemory.prototype._read = function (offset, length, cb) {
-  if (!this.buffer) return cb(new Error('Instance is closed'))
   if (offset + length > this.buffer.length) return cb(new Error('Could not satisfy length'))
   cb(null, this.buffer.slice(offset, offset + length))
 }
