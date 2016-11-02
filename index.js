@@ -6,7 +6,7 @@ module.exports = RandomAccessMemory
 function RandomAccessMemory (buf) {
   if (!(this instanceof RandomAccessMemory)) return new RandomAccessMemory(buf)
   AbstractRandomAccess.call(this)
-  this.buffer = buf || Buffer(0)
+  this.buffer = (buf && Buffer.isBuffer(buf)) ? buf : new Buffer(0)
   this.length = this.buffer.length
 }
 
@@ -28,4 +28,10 @@ RandomAccessMemory.prototype._write = function (offset, data, cb) {
 RandomAccessMemory.prototype._read = function (offset, length, cb) {
   if (offset + length > this.buffer.length) return cb(new Error('Could not satisfy length'))
   cb(null, this.buffer.slice(offset, offset + length))
+}
+
+RandomAccessMemory.prototype.unlink = function (cb) {
+  this.buffer = new Buffer(0)
+  this.length = 0
+  if (cb) cb(null)
 }
