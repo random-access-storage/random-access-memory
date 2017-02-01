@@ -7,8 +7,7 @@
     "test": "standard && tape test.js"
   },
   "dependencies": {
-    "abstract-random-access": "^1.0.2",
-    "inherits": "^2.0.1"
+    "process-nextick-args": "^1.0.7"
   },
   "devDependencies": {
     "standard": "^6.0.8",
