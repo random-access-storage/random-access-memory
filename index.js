@@ -79,21 +79,32 @@ RAM.prototype.read = function (offset, length, cb) {
   nextTick(cb, null, data)
 }
 
+RAM.prototype.del = function (offset, length, cb) {
+  var overflow = offset % this.pageSize
+  var inc = overflow && this.pageSize - overflow
+
+  if (inc < length) {
+    offset += inc
+    length -= overflow
+
+    var end = offset + length
+    var i = offset / this.pageSize
+
+    while (offset + this.pageSize <= end && i < this.buffers.length) {
+      this.buffers[i++] = undefined
+      offset += this.pageSize
+    }
+  }
+
+  if (cb) nextTick(cb)
+}
+
 RAM.prototype.close = function (cb) {
   if (cb) nextTick(cb)
 }
 
 RAM.prototype.destroy = function (cb) {
   this.buffers = []
-  if (cb) nextTick(cb)
-}
-
-RAM.prototype.resize = function (length, cb) {
-  this.length = length
-  while (this.buffer.length && (this.buffer.length - 1) * this.pageSize > this.length) {
-    this.buffer.pop()
-  }
-
   if (cb) nextTick(cb)
 }
 
