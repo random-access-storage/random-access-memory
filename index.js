@@ -1,5 +1,3 @@
-var nextTick = require('process-nextick-args')
-
 module.exports = RAM
 
 function RAM (length, opts) {
@@ -27,7 +25,7 @@ function RAM (length, opts) {
 }
 
 RAM.prototype.open = function (cb) {
-  if (cb) nextTick(cb)
+  if (cb) process.nextTick(cb)
 }
 
 RAM.prototype.write = function (offset, data, cb) {
@@ -53,11 +51,11 @@ RAM.prototype.write = function (offset, data, cb) {
     data = data.slice(next.length)
   }
 
-  if (cb) nextTick(cb)
+  if (cb) process.nextTick(cb)
 }
 
 RAM.prototype.read = function (offset, length, cb) {
-  if (offset + length > this.length) return nextTick(cb, new Error('Could not satisfy length'))
+  if (offset + length > this.length) return process.nextTick(cb, new Error('Could not satisfy length'))
 
   var data = new Buffer(length)
   var ptr = 0
@@ -76,7 +74,7 @@ RAM.prototype.read = function (offset, length, cb) {
     rel = 0
   }
 
-  nextTick(cb, null, data)
+  process.nextTick(cb, null, data)
 }
 
 RAM.prototype.del = function (offset, length, cb) {
@@ -96,16 +94,16 @@ RAM.prototype.del = function (offset, length, cb) {
     }
   }
 
-  if (cb) nextTick(cb)
+  if (cb) process.nextTick(cb)
 }
 
 RAM.prototype.close = function (cb) {
-  if (cb) nextTick(cb)
+  if (cb) process.nextTick(cb)
 }
 
 RAM.prototype.destroy = function (cb) {
   this.buffers = []
-  if (cb) nextTick(cb)
+  if (cb) process.nextTick(cb)
 }
 
 RAM.prototype.toBuffer = function () {
