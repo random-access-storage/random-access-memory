@@ -6,22 +6,22 @@
   "scripts": {
     "test": "standard && tape test.js"
   },
+  "dependencies": {
+    "inherits": "^2.0.3",
+    "random-access-storage": "^1.1.1"
+  },
   "devDependencies": {
     "standard": "^11.0.1",
     "tape": "^4.9.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mafintosh/random-access-memory.git"
+    "url": "https://github.com/random-access-storage/random-access-memory.git"
   },
   "author": "Mathias Buus (@mafintosh)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mafintosh/random-access-memory/issues"
+    "url": "https://github.com/random-access-storage/random-access-memory/issues"
   },
-  "homepage": "https://github.com/mafintosh/random-access-memory",
-  "dependencies": {
-    "inherits": "^2.0.3",
-    "random-access-storage": "^1.1.1"
-  }
+  "homepage": "https://github.com/random-access-storage/random-access-memory"
 }
