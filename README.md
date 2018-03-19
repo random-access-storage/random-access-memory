@@ -6,7 +6,7 @@ Exposes the same interface as [random-access-file](https://github.com/mafintosh/
 npm install random-access-memory
 ```
 
-[![build status](http://img.shields.io/travis/random-access-memory/random-access-memory.svg?style=flat)](http://travis-ci.org/random-access-memory/random-access-memory)
+[![build status](http://img.shields.io/travis/random-access-storage/random-access-memory.svg?style=flat)](http://travis-ci.org/random-access-storage/random-access-memory)
 
 ## Usage
 
