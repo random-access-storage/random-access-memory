@@ -1,121 +1,116 @@
-var nextTick = require('process-nextick-args')
+const RandomAccess = require('random-access-storage')
+const inherits = require('inherits')
+
+const DEFAULT_PAGE_SIZE = 1024 * 1024
 
 module.exports = RAM
 
-function RAM (length, opts) {
-  if (!(this instanceof RAM)) return new RAM(length, opts)
-
-  if (Buffer.isBuffer(length)) {
-    if (!opts) opts = {}
-    opts.buffer = length
-    length = opts.buffer.length
-  }
-
-  if (typeof length === 'object') {
-    opts = length
-    length = 0
-  }
-
+function RAM (opts) {
+  if (!(this instanceof RAM)) return new RAM(opts)
+  if (typeof opts === 'number') opts = {length: opts}
   if (!opts) opts = {}
-  if (typeof length !== 'number') length = 0
 
-  this.pageSize = length || opts.pageSize || 1024 * 1024
-  this.length = length || 0
+  RandomAccess.call(this)
+
+  if (Buffer.isBuffer(opts)) {
+    opts = {length: opts.length, buffer: opts}
+  }
+
+  this.length = opts.length || 0
+  this.pageSize = opts.length || opts.pageSize || DEFAULT_PAGE_SIZE
   this.buffers = []
 
   if (opts.buffer) this.buffers.push(opts.buffer)
 }
 
-RAM.prototype.open = function (cb) {
-  if (cb) nextTick(cb)
+inherits(RAM, RandomAccess)
+
+RAM.prototype._stat = function (req) {
+  callback(req, null, {size: this.length})
 }
 
-RAM.prototype.write = function (offset, data, cb) {
-  if (offset + data.length > this.length) this.length = data.length + offset
+RAM.prototype._write = function (req) {
+  var i = Math.floor(req.offset / this.pageSize)
+  var rel = req.offset - i * this.pageSize
+  var start = 0
 
-  var i = Math.floor(offset / this.pageSize)
-  var rel = offset - (i * this.pageSize)
+  const len = req.offset + req.size
+  if (len > this.length) this.length = len
 
-  while (data.length) {
-    var next = (rel + data.length) > this.pageSize ? data.slice(0, this.pageSize - rel) : data
-    var buf = this.buffers[i]
+  while (start < req.size) {
+    const page = this._page(i++, true)
+    const free = this.pageSize - rel
+    const end = free < (req.size - start)
+      ? start + free
+      : req.size
 
-    if (!buf) {
-      buf = rel === 0 && next.length === this.pageSize ? next : calloc(this.pageSize)
-      this.buffers[i] = buf
-    }
-
-    if (buf !== next) next.copy(buf, rel)
-    if (next === data) break
-
-    i++
-    rel = 0
-    data = data.slice(next.length)
-  }
-
-  if (cb) nextTick(cb)
-}
-
-RAM.prototype.read = function (offset, length, cb) {
-  if (offset + length > this.length) return nextTick(cb, new Error('Could not satisfy length'))
-
-  var data = new Buffer(length)
-  var ptr = 0
-  var i = Math.floor(offset / this.pageSize)
-  var rel = offset - (i * this.pageSize)
-
-  while (ptr < data.length) {
-    var buf = this.buffers[i]
-    var len = this.pageSize - rel
-
-    if (!buf) data.fill(0, ptr, Math.min(data.length, ptr + len))
-    else buf.copy(data, ptr, rel)
-
-    ptr += len
-    i++
+    req.data.copy(page, rel, start, end)
+    start = end
     rel = 0
   }
 
-  nextTick(cb, null, data)
+  callback(req, null, null)
 }
 
-RAM.prototype.del = function (offset, length, cb) {
-  var overflow = offset % this.pageSize
-  var inc = overflow && this.pageSize - overflow
+RAM.prototype._read = function (req) {
+  var i = Math.floor(req.offset / this.pageSize)
+  var rel = req.offset - i * this.pageSize
+  var start = 0
 
-  if (inc < length) {
-    offset += inc
-    length -= overflow
+  if (req.offset + req.size > this.length) {
+    return callback(req, new Error('Could not satisfy length'), null)
+  }
 
-    var end = offset + length
-    var i = offset / this.pageSize
+  const data = Buffer.alloc(req.size)
 
-    while (offset + this.pageSize <= end && i < this.buffers.length) {
+  while (start < req.size) {
+    const page = this._page(i++, false)
+    const avail = this.pageSize - rel
+    const wanted = req.size - start
+    const len = avail < wanted ? avail : wanted
+
+    if (page) page.copy(data, start, rel, rel + len)
+    start += len
+    rel = 0
+  }
+
+  callback(req, null, data)
+}
+
+RAM.prototype._del = function (req) {
+  var i = Math.floor(req.offset / this.pageSize)
+  var rel = req.offset - i * this.pageSize
+  var start = 0
+
+  while (start < req.size) {
+    if (rel === 0 && req.size - start >= this.pageSize) {
       this.buffers[i++] = undefined
-      offset += this.pageSize
     }
+
+    rel = 0
+    start += this.pageSize - rel
   }
 
-  if (cb) nextTick(cb)
+  callback(req, null, null)
 }
 
-RAM.prototype.close = function (cb) {
-  if (cb) nextTick(cb)
+RAM.prototype._destroy = function (req) {
+  this._buffers = []
+  this.length = 0
+  callback(req, null, null)
 }
 
-RAM.prototype.destroy = function (cb) {
-  this.buffers = []
-  if (cb) nextTick(cb)
+RAM.prototype._page = function (i, upsert) {
+  var page = this.buffers[i]
+  if (page || !upsert) return page
+  page = this.buffers[i] = Buffer.alloc(this.pageSize)
+  return page
 }
 
-RAM.prototype.toBuffer = function () {
-  var buf = this.buffers.length === 1 ? this.buffers[0] : Buffer.concat(this.buffers)
-  return buf.length === this.length ? buf : buf.slice(0, this.length)
+function callback (req, err, data) {
+  process.nextTick(callbackNT, req, err, data)
 }
 
-function calloc (len) {
-  if (Buffer.alloc) return Buffer.alloc(len)
-  var buf = new Buffer(len)
-  buf.fill(0)
-  return buf
+function callbackNT (req, err, data) {
+  req.callback(err, data)
 }

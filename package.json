@@ -6,12 +6,9 @@
   "scripts": {
     "test": "standard && tape test.js"
   },
-  "dependencies": {
-    "process-nextick-args": "^1.0.7"
-  },
   "devDependencies": {
-    "standard": "^6.0.8",
-    "tape": "^4.5.1"
+    "standard": "^11.0.1",
+    "tape": "^4.9.0"
   },
   "repository": {
     "type": "git",
@@ -22,5 +19,9 @@
   "bugs": {
     "url": "https://github.com/mafintosh/random-access-memory/issues"
   },
-  "homepage": "https://github.com/mafintosh/random-access-memory"
+  "homepage": "https://github.com/mafintosh/random-access-memory",
+  "dependencies": {
+    "inherits": "^2.0.3",
+    "random-access-storage": "^1.1.1"
+  }
 }

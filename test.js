@@ -1,31 +1,31 @@
-var tape = require('tape')
-var ram = require('./')
+const tape = require('tape')
+const ram = require('./')
 
 tape('write and read', function (t) {
-  var file = ram()
+  const file = ram()
 
-  file.write(0, new Buffer('hello'), function (err) {
+  file.write(0, Buffer.from('hello'), function (err) {
     t.error(err, 'no error')
     file.read(0, 5, function (err, buf) {
       t.error(err, 'no error')
-      t.same(buf, new Buffer('hello'))
+      t.same(buf, Buffer.from('hello'))
       t.end()
     })
   })
 })
 
 tape('read empty', function (t) {
-  var file = ram()
+  const file = ram()
 
   file.read(0, 0, function (err, buf) {
     t.error(err, 'no error')
-    t.same(buf, new Buffer(0), 'empty buffer')
+    t.same(buf, Buffer.alloc(0), 'empty buffer')
     t.end()
   })
 })
 
 tape('read range > file', function (t) {
-  var file = ram()
+  const file = ram()
 
   file.read(0, 5, function (err, buf) {
     t.ok(err, 'not satisfiable')
@@ -34,21 +34,21 @@ tape('read range > file', function (t) {
 })
 
 tape('random access write and read', function (t) {
-  var file = ram()
+  const file = ram()
 
-  file.write(10, new Buffer('hi'), function (err) {
+  file.write(10, Buffer.from('hi'), function (err) {
     t.error(err, 'no error')
-    file.write(0, new Buffer('hello'), function (err) {
+    file.write(0, Buffer.from('hello'), function (err) {
       t.error(err, 'no error')
       file.read(10, 2, function (err, buf) {
         t.error(err, 'no error')
-        t.same(buf, new Buffer('hi'))
+        t.same(buf, Buffer.from('hi'))
         file.read(0, 5, function (err, buf) {
           t.error(err, 'no error')
-          t.same(buf, new Buffer('hello'))
+          t.same(buf, Buffer.from('hello'))
           file.read(5, 5, function (err, buf) {
             t.error(err, 'no error')
-            t.same(buf, new Buffer([0, 0, 0, 0, 0]))
+            t.same(buf, Buffer.from([0, 0, 0, 0, 0]))
             t.end()
           })
         })
@@ -58,10 +58,11 @@ tape('random access write and read', function (t) {
 })
 
 tape('buffer constructor', function (t) {
-  var file = ram(new Buffer('contents'))
+  const file = ram(Buffer.from('contents'))
+
   file.read(0, 7, function (err, buf) {
     t.error(err)
-    t.deepEqual(buf, new Buffer('content'))
+    t.deepEqual(buf, Buffer.from('content'))
     t.end()
   })
 })

@@ -14,8 +14,8 @@ npm install random-access-memory
 var ram = require('random-access-memory')
 var file = ram()
 
-file.write(0, Buffer('hello'), function () {
-  file.write(5, Buffer(' world'), function () {
+file.write(0, Buffer.from('hello'), function () {
+  file.write(5, Buffer.from(' world'), function () {
     file.read(0, 11, console.log) // returns Buffer(hello world)
   })
 })
@@ -24,7 +24,7 @@ file.write(0, Buffer('hello'), function () {
 You can also initialize a `ram` instance with a `Buffer`:
 
 ```js
-var file = ram(Buffer('hello world'))
+var file = ram(Buffer.from('hello world'))
 ```
 
 ## License
