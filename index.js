@@ -1,4 +1,5 @@
 const RandomAccess = require('random-access-storage')
+const isOptions = require('is-options')
 const inherits = require('inherits')
 
 const DEFAULT_PAGE_SIZE = 1024 * 1024
@@ -15,6 +16,7 @@ function RAM (opts) {
   if (Buffer.isBuffer(opts)) {
     opts = {length: opts.length, buffer: opts}
   }
+  if (!isOptions(opts)) opts = {}
 
   this.length = opts.length || 0
   this.pageSize = opts.length || opts.pageSize || DEFAULT_PAGE_SIZE
