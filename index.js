@@ -109,6 +109,16 @@ RAM.prototype._page = function (i, upsert) {
   return page
 }
 
+RAM.prototype.toBuffer = function () {
+  const buf = Buffer.alloc(this.length)
+
+  for (var i = 0; i < this.buffers.length; i++) {
+    if (this.buffers[i]) this.buffers[i].copy(buf, i * this.pageSize)
+  }
+
+  return buf
+}
+
 function callback (req, err, data) {
   process.nextTick(callbackNT, req, err, data)
 }
