@@ -84,6 +84,10 @@ RAM.prototype._del = function (req) {
   var rel = req.offset - i * this.pageSize
   var start = 0
 
+  if (req.offset + req.size > this.length) {
+    req.size = Math.max(0, this.length - req.offset)
+  }
+
   while (start < req.size) {
     if (rel === 0 && req.size - start >= this.pageSize) {
       this.buffers[i++] = undefined
@@ -91,6 +95,10 @@ RAM.prototype._del = function (req) {
 
     rel = 0
     start += this.pageSize - rel
+  }
+
+  if (req.offset + req.size >= this.length) {
+    this.length = req.offset
   }
 
   callback(req, null, null)

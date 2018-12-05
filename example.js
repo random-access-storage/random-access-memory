@@ -1,4 +1,4 @@
-const ram = require('./index2')
+const ram = require('./index')
 
 const mem = ram()
 
