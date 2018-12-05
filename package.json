@@ -1,6 +1,6 @@
 {
   "name": "random-access-memory",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Exposes the same interface as random-access-file but instead of writing/reading data to a file it maintains it in memory",
   "main": "index.js",
   "scripts": {
