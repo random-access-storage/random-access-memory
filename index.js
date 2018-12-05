@@ -110,7 +110,7 @@ RAM.prototype._page = function (i, upsert) {
 }
 
 RAM.prototype.toBuffer = function () {
-  var buf = Buffer.alloc(this.length)
+  const buf = Buffer.alloc(this.length)
 
   for (var i = 0; i < this.buffers.length; i++) {
     if (this.buffers[i]) this.buffers[i].copy(buf, i * this.pageSize)
