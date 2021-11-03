@@ -1,6 +1,7 @@
 const RandomAccess = require('random-access-storage')
 const isOptions = require('is-options')
 const inherits = require('inherits')
+const queueTick = require('queue-tick')
 
 const DEFAULT_PAGE_SIZE = 1024 * 1024
 
@@ -133,9 +134,5 @@ RAM.prototype.toBuffer = function () {
 }
 
 function callback (req, err, data) {
-  process.nextTick(callbackNT, req, err, data)
-}
-
-function callbackNT (req, err, data) {
-  req.callback(err, data)
+  queueTick(() => req.callback(err, data))
 }

@@ -9,6 +9,7 @@
   "dependencies": {
     "inherits": "^2.0.3",
     "is-options": "^1.0.1",
+    "queue-tick": "^1.0.0",
     "random-access-storage": "^1.1.1"
   },
   "devDependencies": {
