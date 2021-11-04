@@ -28,7 +28,7 @@ function RAM (opts) {
 inherits(RAM, RandomAccess)
 
 RAM.prototype._stat = function (req) {
-  callback(req, null, {size: this.length})
+  req.callback(null, {size: this.length})
 }
 
 RAM.prototype._write = function (req) {
@@ -51,7 +51,7 @@ RAM.prototype._write = function (req) {
     rel = 0
   }
 
-  callback(req, null, null)
+  req.callback(null, null)
 }
 
 RAM.prototype._read = function (req) {
@@ -60,7 +60,7 @@ RAM.prototype._read = function (req) {
   var start = 0
 
   if (req.offset + req.size > this.length) {
-    return callback(req, new Error('Could not satisfy length'), null)
+    return req.callback(new Error('Could not satisfy length'), null)
   }
 
   const data = Buffer.alloc(req.size)
@@ -76,7 +76,7 @@ RAM.prototype._read = function (req) {
     rel = 0
   }
 
-  callback(req, null, data)
+  req.callback(null, data)
 }
 
 RAM.prototype._del = function (req) {
@@ -106,13 +106,13 @@ RAM.prototype._del = function (req) {
     this.length = req.offset
   }
 
-  callback(req, null, null)
+  req.callback(null, null)
 }
 
 RAM.prototype._destroy = function (req) {
   this._buffers = []
   this.length = 0
-  callback(req, null, null)
+  req.callback(null, null)
 }
 
 RAM.prototype._page = function (i, upsert) {
@@ -130,12 +130,4 @@ RAM.prototype.toBuffer = function () {
   }
 
   return buf
-}
-
-function callback (req, err, data) {
-  process.nextTick(callbackNT, req, err, data)
-}
-
-function callbackNT (req, err, data) {
-  req.callback(err, data)
 }

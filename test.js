@@ -66,3 +66,23 @@ tape('buffer constructor', function (t) {
     t.end()
   })
 })
+
+tape('not sync', function (t) {
+  const file = ram()
+  let sync = true
+  file.write(10, Buffer.from('hi'), function () {
+    t.notOk(sync)
+    sync = true
+    file.write(0, Buffer.from('hello'), function () {
+      t.notOk(sync)
+      sync = true
+      file.read(10, 2, function () {
+        t.notOk(sync)
+        t.end()
+      })
+      sync = false
+    })
+    sync = false
+  })
+  sync = false
+})
