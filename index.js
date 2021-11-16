@@ -1,6 +1,7 @@
 const RandomAccess = require('random-access-storage')
 const isOptions = require('is-options')
 const inherits = require('inherits')
+const b4a = require('b4a')
 
 const DEFAULT_PAGE_SIZE = 1024 * 1024
 
@@ -13,7 +14,7 @@ function RAM (opts) {
 
   RandomAccess.call(this)
 
-  if (Buffer.isBuffer(opts)) {
+  if (b4a.isBuffer(opts)) {
     opts = {length: opts.length, buffer: opts}
   }
   if (!isOptions(opts)) opts = {}
@@ -46,7 +47,7 @@ RAM.prototype._write = function (req) {
       ? start + free
       : req.size
 
-    req.data.copy(page, rel, start, end)
+    b4a.copy(req.data, page, rel, start, end)
     start = end
     rel = 0
   }
@@ -63,7 +64,7 @@ RAM.prototype._read = function (req) {
     return req.callback(new Error('Could not satisfy length'), null)
   }
 
-  const data = Buffer.alloc(req.size)
+  const data = b4a.alloc(req.size)
 
   while (start < req.size) {
     const page = this._page(i++, false)
@@ -71,7 +72,7 @@ RAM.prototype._read = function (req) {
     const wanted = req.size - start
     const len = avail < wanted ? avail : wanted
 
-    if (page) page.copy(data, start, rel, rel + len)
+    if (page) b4a.copy(page, data, start, rel, rel + len)
     start += len
     rel = 0
   }
@@ -118,15 +119,15 @@ RAM.prototype._destroy = function (req) {
 RAM.prototype._page = function (i, upsert) {
   var page = this.buffers[i]
   if (page || !upsert) return page
-  page = this.buffers[i] = Buffer.alloc(this.pageSize)
+  page = this.buffers[i] = b4a.alloc(this.pageSize)
   return page
 }
 
 RAM.prototype.toBuffer = function () {
-  const buf = Buffer.alloc(this.length)
+  const buf = b4a.alloc(this.length)
 
   for (var i = 0; i < this.buffers.length; i++) {
-    if (this.buffers[i]) this.buffers[i].copy(buf, i * this.pageSize)
+    if (this.buffers[i]) b4a.copy(this.buffers[i], buf, i * this.pageSize)
   }
 
   return buf
