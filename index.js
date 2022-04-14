@@ -96,10 +96,11 @@ RAM.prototype._del = function (req) {
 
   while (start < req.size) {
     if (rel === 0 && req.size - start >= this.pageSize) {
-      this.buffers[i++] = undefined
+      this.buffers[i] = undefined
     }
 
     rel = 0
+    i += 1
     start += this.pageSize - rel
   }
 

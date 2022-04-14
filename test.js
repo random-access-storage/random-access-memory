@@ -86,3 +86,28 @@ tape('not sync', function (t) {
   })
   sync = false
 })
+
+tape('delete', function (t) {
+  const pageSize = 1024
+  const file = ram({ pageSize })
+
+  // identify bug in deletion when file.length > 2 * page size
+  const orig = Buffer.alloc(pageSize * 3, 0xff)
+  const expected = Buffer.alloc(10, 0xff)
+
+  file.write(0, orig, function (err) {
+    t.error(err, 'no error')
+    file.read(0, file.length, function (err, buf) {
+      t.error(err, 'no error')
+      t.same(buf, orig)
+      file.del(10, Infinity, function (err) {
+        t.error(err, 'no error')
+        file.read(0, file.length, function (err, buf) {
+          t.error(err, 'no error')
+          t.same(buf, expected)
+          t.end()
+        })
+      })
+    })
+  })
+})
