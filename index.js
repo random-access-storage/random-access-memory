@@ -133,3 +133,11 @@ RAM.prototype.toBuffer = function () {
 
   return buf
 }
+
+RAM.prototype.clone = function () {
+  const ram = new RAM()
+  ram.length = this.length
+  ram.pageSize = this.pageSize
+  ram.buffers = this.buffers.map((buffer) => Buffer.from(buffer))
+  return ram
+}
