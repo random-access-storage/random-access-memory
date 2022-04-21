@@ -111,3 +111,20 @@ tape('delete', function (t) {
     })
   })
 })
+
+tape('clone', function (t) {
+  const file = ram()
+
+  file.write(0, Buffer.from('hello'), function (err) {
+    t.error(err, 'no error')
+    const file2 = file.clone()
+    file.write(0, Buffer.from('world'), function (err) {
+      t.error(err, 'no error')
+      file2.read(0, 5, function (err, buf) {
+        t.error(err, 'no error')
+        t.same(buf, Buffer.from('hello'))
+        t.end()
+      })
+    })
+  })
+})
