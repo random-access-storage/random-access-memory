@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "b4a": "^1.1.0",
-    "random-access-storage": "^1.1.1"
+    "random-access-storage": "^2.0.1"
   },
   "devDependencies": {
     "brittle": "^2.3.1",
