@@ -1,8 +1,8 @@
 const tape = require('tape')
-const ram = require('./')
+const RAM = require('./')
 
 tape('write and read', function (t) {
-  const file = ram()
+  const file = new RAM()
 
   file.write(0, Buffer.from('hello'), function (err) {
     t.error(err, 'no error')
@@ -15,7 +15,7 @@ tape('write and read', function (t) {
 })
 
 tape('read empty', function (t) {
-  const file = ram()
+  const file = new RAM()
 
   file.read(0, 0, function (err, buf) {
     t.error(err, 'no error')
@@ -25,7 +25,7 @@ tape('read empty', function (t) {
 })
 
 tape('read range > file', function (t) {
-  const file = ram()
+  const file = new RAM()
 
   file.read(0, 5, function (err, buf) {
     t.ok(err, 'not satisfiable')
@@ -34,7 +34,7 @@ tape('read range > file', function (t) {
 })
 
 tape('random access write and read', function (t) {
-  const file = ram()
+  const file = new RAM()
 
   file.write(10, Buffer.from('hi'), function (err) {
     t.error(err, 'no error')
@@ -58,7 +58,7 @@ tape('random access write and read', function (t) {
 })
 
 tape('buffer constructor', function (t) {
-  const file = ram(Buffer.from('contents'))
+  const file = new RAM(Buffer.from('contents'))
 
   file.read(0, 7, function (err, buf) {
     t.error(err)
@@ -68,7 +68,7 @@ tape('buffer constructor', function (t) {
 })
 
 tape('not sync', function (t) {
-  const file = ram()
+  const file = new RAM()
   let sync = true
   file.write(10, Buffer.from('hi'), function () {
     t.notOk(sync)
@@ -89,7 +89,7 @@ tape('not sync', function (t) {
 
 tape('delete', function (t) {
   const pageSize = 1024
-  const file = ram({ pageSize })
+  const file = new RAM({ pageSize })
 
   // identify bug in deletion when file.length > 2 * page size
   const orig = Buffer.alloc(pageSize * 3, 0xff)
@@ -113,7 +113,7 @@ tape('delete', function (t) {
 })
 
 tape('clone', function (t) {
-  const file = ram()
+  const file = new RAM()
 
   file.write(0, Buffer.from('hello'), function (err) {
     t.error(err, 'no error')
