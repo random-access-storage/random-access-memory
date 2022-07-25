@@ -1,19 +1,20 @@
-const RandomAccessStorage = require('random-access-storage')
+const RandomAccess = require('random-access-storage')
+const isOptions = require('is-options')
 const b4a = require('b4a')
 
 const DEFAULT_PAGE_SIZE = 1024 * 1024
 
-module.exports = class RandomAccessMemory extends RandomAccessStorage {
-  constructor (opts = {}) {
+module.exports = class RAM extends RandomAccess {
+  constructor (opts) {
     super()
 
-    if (typeof opts === 'number') {
-      opts = { length: opts }
-    }
+    if (typeof opts === 'number') opts = { length: opts }
+    if (!opts) opts = {}
 
     if (b4a.isBuffer(opts)) {
-      opts = { length: opts.byteLength, buffer: opts }
+      opts = { length: opts.length, buffer: opts }
     }
+    if (!isOptions(opts)) opts = {}
 
     this.length = opts.length || 0
     this.pageSize = opts.length || opts.pageSize || DEFAULT_PAGE_SIZE
@@ -129,10 +130,10 @@ module.exports = class RandomAccessMemory extends RandomAccessStorage {
   }
 
   clone () {
-    const ram = new RandomAccessMemory()
+    const ram = new RAM()
     ram.length = this.length
     ram.pageSize = this.pageSize
-    ram.buffers = this.buffers.map((buffer) => b4a.from(buffer))
+    ram.buffers = this.buffers.map((buffer) => Buffer.from(buffer))
     return ram
   }
 }
