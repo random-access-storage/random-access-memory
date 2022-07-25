@@ -19,7 +19,7 @@ file.write(0, Buffer.from('hello'), function () {
 })
 ```
 
-You can also initialize a RAM instance with a `Buffer`:
+You can also initialize a `RAM` instance with a `Buffer`:
 
 ```js
 const file = new RAM(Buffer.from('hello world'))
