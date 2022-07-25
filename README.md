@@ -9,8 +9,8 @@ npm install random-access-memory
 ## Usage
 
 ``` js
-const RandomAccessMemory = require('random-access-memory')
-const file = new RandomAccessMemory()
+const RAM = require('random-access-memory')
+const file = new RAM()
 
 file.write(0, Buffer.from('hello'), function () {
   file.write(5, Buffer.from(' world'), function () {
@@ -22,7 +22,7 @@ file.write(0, Buffer.from('hello'), function () {
 You can also initialize a RAM instance with a `Buffer`:
 
 ```js
-const file = new RandomAccessMemory(Buffer.from('hello world'))
+const file = new RAM(Buffer.from('hello world'))
 ```
 
 ## License
