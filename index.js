@@ -8,11 +8,11 @@ module.exports = class RAM extends RandomAccess {
   constructor (opts) {
     super()
 
-    if (typeof opts === 'number') opts = {length: opts}
+    if (typeof opts === 'number') opts = { length: opts }
     if (!opts) opts = {}
 
     if (b4a.isBuffer(opts)) {
-      opts = {length: opts.length, buffer: opts}
+      opts = { length: opts.length, buffer: opts }
     }
     if (!isOptions(opts)) opts = {}
 
@@ -24,13 +24,13 @@ module.exports = class RAM extends RandomAccess {
   }
 
   _stat (req) {
-    req.callback(null, {size: this.length})
+    req.callback(null, { size: this.length })
   }
 
   _write (req) {
-    var i = Math.floor(req.offset / this.pageSize)
-    var rel = req.offset - i * this.pageSize
-    var start = 0
+    let i = Math.floor(req.offset / this.pageSize)
+    let rel = req.offset - i * this.pageSize
+    let start = 0
 
     const len = req.offset + req.size
     if (len > this.length) this.length = len
@@ -51,9 +51,9 @@ module.exports = class RAM extends RandomAccess {
   }
 
   _read (req) {
-    var i = Math.floor(req.offset / this.pageSize)
-    var rel = req.offset - i * this.pageSize
-    var start = 0
+    let i = Math.floor(req.offset / this.pageSize)
+    let rel = req.offset - i * this.pageSize
+    let start = 0
 
     if (req.offset + req.size > this.length) {
       return req.callback(new Error('Could not satisfy length'), null)
@@ -76,12 +76,12 @@ module.exports = class RAM extends RandomAccess {
   }
 
   _del (req) {
-    var i = Math.floor(req.offset / this.pageSize)
-    var rel = req.offset - i * this.pageSize
-    var start = 0
+    let i = Math.floor(req.offset / this.pageSize)
+    let rel = req.offset - i * this.pageSize
+    let start = 0
 
     if (rel && req.offset + req.size >= this.length) {
-      var buf = this.buffers[i]
+      const buf = this.buffers[i]
       if (buf) buf.fill(0, rel)
     }
 
@@ -113,7 +113,7 @@ module.exports = class RAM extends RandomAccess {
   }
 
   _page (i, upsert) {
-    var page = this.buffers[i]
+    let page = this.buffers[i]
     if (page || !upsert) return page
     page = this.buffers[i] = b4a.alloc(this.pageSize)
     return page
@@ -122,7 +122,7 @@ module.exports = class RAM extends RandomAccess {
   toBuffer () {
     const buf = b4a.alloc(this.length)
 
-    for (var i = 0; i < this.buffers.length; i++) {
+    for (let i = 0; i < this.buffers.length; i++) {
       if (this.buffers[i]) b4a.copy(this.buffers[i], buf, i * this.pageSize)
     }
 

@@ -4,7 +4,7 @@
   "description": "Exposes the same interface as random-access-file but instead of writing/reading data to a file it maintains it in memory",
   "main": "index.js",
   "scripts": {
-    "test": "standard && tape test.js"
+    "test": "standard && brittle test.js"
   },
   "dependencies": {
     "b4a": "^1.1.0",
@@ -12,8 +12,8 @@
     "random-access-storage": "^2.1.0"
   },
   "devDependencies": {
-    "standard": "^11.0.1",
-    "tape": "^4.9.0"
+    "brittle": "^2.3.1",
+    "standard": "^17.0.0"
   },
   "repository": {
     "type": "git",
