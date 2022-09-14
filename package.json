@@ -3,13 +3,16 @@
   "version": "5.0.1",
   "description": "Exposes the same interface as random-access-file but instead of writing/reading data to a file it maintains it in memory",
   "main": "index.js",
+  "files": [
+    "index.js"
+  ],
   "scripts": {
     "test": "standard && brittle test.js"
   },
   "dependencies": {
     "b4a": "^1.6.0",
     "is-options": "^1.0.2",
-    "random-access-storage": "^2.2.1"
+    "random-access-storage": "^3.0.0"
   },
   "devDependencies": {
     "brittle": "^3.0.4",

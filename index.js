@@ -106,7 +106,7 @@ module.exports = class RAM extends RandomAccess {
     req.callback(null, null)
   }
 
-  _destroy (req) {
+  _unlink (req) {
     this._buffers = []
     this.length = 0
     req.callback(null, null)
