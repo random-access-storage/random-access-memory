@@ -24,7 +24,17 @@ module.exports = class RAM extends RandomAccess {
   }
 
   _stat (req) {
-    req.callback(null, { size: this.length })
+    const st = {
+      size: this.length,
+      blksize: this.pageSize,
+      blocks: 0
+    }
+
+    for (let i = 0; i < this.buffers.length; i++) {
+      if (this.buffers[i]) st.blocks += this.buffers[i].byteLength / 512
+    }
+
+    req.callback(null, st)
   }
 
   _write (req) {
@@ -133,7 +143,7 @@ module.exports = class RAM extends RandomAccess {
     const ram = new RAM()
     ram.length = this.length
     ram.pageSize = this.pageSize
-    ram.buffers = this.buffers.map((buffer) => Buffer.from(buffer))
+    ram.buffers = this.buffers.map((buffer) => b4a.from(buffer))
     return ram
   }
 }
