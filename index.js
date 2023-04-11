@@ -23,6 +23,23 @@ module.exports = class RAM extends RandomAccess {
     if (opts.buffer) this.buffers.push(opts.buffer)
   }
 
+  static reusable () {
+    const all = new Map()
+    const RAM = this
+
+    return function createStorage (name) {
+      const existing = all.get(name)
+      const ram = existing ? existing.clone() : new RAM()
+
+      all.set(name, ram)
+      ram.on('unlink', function () {
+        if (all.get(name) === ram) all.delete(name)
+      })
+
+      return ram
+    }
+  }
+
   _stat (req) {
     const st = {
       size: this.length,
