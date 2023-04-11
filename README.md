@@ -25,7 +25,7 @@ You can also initialize a `RAM` instance with a `Buffer`:
 const file = new RAM(Buffer.from('hello world'))
 ```
 
-If you want to mimick a folder on disk, you can use `const createRAM = RAM.resuable()`.
+If you want to mimick a folder on disk, you can use `const createRAM = RAM.reusable()`.
 
 This stores the created ram instances, ie `ram = createRAM(name)` in a map so they can be reopened
 with the same state, similar to working with files, but still backed by ram.
