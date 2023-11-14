@@ -137,3 +137,18 @@ test('clone', function (t) {
     })
   })
 })
+
+test('unlink', function (t) {
+  t.plan(4)
+
+  const file = new RAM()
+
+  file.write(0, Buffer.from('hello'), function (err) {
+    t.absent(err, 'no error')
+    file.unlink(function (err) {
+      t.absent(err, 'no error')
+      t.is(0, file.buffers.length, 'no buffer')
+      t.is(0, file.length, 'no length')
+    })
+  })
+})
