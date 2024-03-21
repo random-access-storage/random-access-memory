@@ -31,7 +31,12 @@ module.exports = class RAM extends RandomAccess {
       const existing = all.get(name)
       const ram = existing ? existing.clone() : new RAM()
 
-      all.set(name, ram)
+      if (!existing || existing.closed) {
+        // only overwrite storage if its closed
+        // this techically also wrong but better than storing a clone instead...
+        all.set(name, ram)
+      }
+
       ram.on('unlink', function () {
         if (all.get(name) === ram) all.delete(name)
       })
